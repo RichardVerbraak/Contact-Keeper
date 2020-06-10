@@ -14,7 +14,7 @@ const User = require('../models/User')
 const { check, validationResult } = require('express-validator')
 
 // @route       POST    api/users
-// @desc        Register a user
+// @desc        Register a new user > hash password > save to DB > generate a token
 // @access      Public
 router.post(
 	'/',
@@ -48,7 +48,7 @@ router.post(
 				res.status(400).json({ msg: 'User already exists' })
 			}
 
-			// If not, create a new user with the mongo schema
+			// If not, create a new user with the mongo schema + an ID that Mongo creates for us
 			user = new User({
 				name,
 				email,
@@ -62,7 +62,7 @@ router.post(
 
 			await user.save()
 
-			// The object you want to send in the token, in this case just the user id
+			// The object you want to send in the token, in this case just the user id (which comes from the Schema automatically not from the DB itself)
 			const payload = {
 				user: {
 					id: user.id,
