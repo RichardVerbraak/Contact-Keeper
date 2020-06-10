@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const bcrypt = require('bcryptjs')
 
 // Schema for how our post is going to look like
 const User = require('../models/User')
@@ -22,7 +23,7 @@ router.post(
 			min: 6,
 		}),
 	],
-	(req, res) => {
+	async (req, res) => {
 		// Array of errors if there are any
 		const errors = validationResult(req)
 
@@ -31,7 +32,36 @@ router.post(
 			return res.status(400).json({ errors: errors.array() })
 		}
 
-		res.send('passed')
+		// Deconstruct info that we get from the body
+		const { name, email, password } = req.body
+
+		try {
+			// Find if a user already exists
+			let user = await User.findOne({ email })
+
+			if (user) {
+				res.status(400).json({ msg: 'User already exists' })
+			}
+
+			// If not, create a new user with the mongo schema
+			user = new User({
+				name,
+				email,
+				password,
+			})
+
+			// Generate a salt > Hash the password with the salt > Save to DB
+			const salt = await bcrypt.genSalt(10)
+
+			user.password = await bcrypt.hash(password, salt)
+
+			await user.save()
+
+			res.send('User Saved')
+		} catch (error) {
+			console.error(error.message)
+			res.send('Server error')
+		}
 	}
 )
 
