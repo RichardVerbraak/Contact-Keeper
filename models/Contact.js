@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 // A schema is how our data is going to look like in MongoDB
-// Each user will have its own set of contacts so to have it be 'relational' we need a specific type that refers to the users in mongoDB
+// Each user will have its own set of contacts so to 'link' them we need a specific type that refers to the users in mongoDB
 const ContactSchema = mongoose.Schema({
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
