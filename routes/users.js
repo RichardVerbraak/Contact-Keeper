@@ -1,6 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
+// The config file serves the same purpose as .env with protected variables and such
+// Brad uses this in order to deploy to heroku instead of using dotenv
+const config = require('config')
 
 // Schema for how our post is going to look like
 const User = require('../models/User')
@@ -57,7 +62,26 @@ router.post(
 
 			await user.save()
 
-			res.send('User Saved')
+			// The object you want to send in the token, in this case just the user id
+			const payload = {
+				user: {
+					id: user.id,
+				},
+			}
+
+			// To generate a token we need to sign it
+			// What you want to send in the token > secret > options like expiration date > callback with error and the token itself as a response
+			jwt.sign(
+				payload,
+				config.get('jwtSecret'),
+				{
+					expiresIn: 360000,
+				},
+				(err, token) => {
+					if (err) throw err
+					res.json({ token })
+				}
+			)
 		} catch (error) {
 			console.error(error.message)
 			res.send('Server error')
