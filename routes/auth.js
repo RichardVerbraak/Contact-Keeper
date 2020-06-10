@@ -1,17 +1,27 @@
 const express = require('express')
 const router = express.Router()
+const { check, validationResult } = require('express-validator')
+const auth = require('../middleware/auth')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const config = require('config')
-const { check, validationResult } = require('express-validator')
 
 const User = require('../models/User')
 
 // @route       GET    api/auth
 // @desc        Get logged in user
 // @access      Private
-router.get('/', (req, res) => {
-	res.send('Get logged user')
+// Pass in the middleware auth which will run on this route (api/auth)
+// On this route you have to be logged in (have a JWT)
+router.get('/', auth, async (req, res) => {
+	// Find the user in the DB by his ID and return that data minus his password
+	try {
+		const user = await User.findById(req.user.id).select('-password')
+		res.json(user)
+	} catch (error) {
+		console.error(error.message)
+		res.status(500).json({ msg: 'Server Error' })
+	}
 })
 
 // @route       POST    api/auth
