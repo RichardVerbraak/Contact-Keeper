@@ -1,15 +1,13 @@
 import React, { useContext } from 'react'
-import ContactContext from '../context/contact/ContactContext'
+import Contacts from './Contacts'
 
 const Home = (props) => {
-	const context = useContext(ContactContext)
-	const { contacts } = context
 	return (
-		<div>
-			<h1>Home</h1>
-			{contacts.map((contact) => {
-				return <li key={contact.id}>{contact.name}</li>
-			})}
+		<div className='grid-2'>
+			<div>{/*ContactForm*/}</div>
+			<div>
+				<Contacts />
+			</div>
 		</div>
 	)
 }
