@@ -41,23 +41,27 @@ router.post(
 		}
 		const { email, password } = req.body
 
+		// Finds the user in the DB by his email when he logs in
 		try {
 			let user = await User.findOne({ email })
 			if (!user) {
 				return res.status(400).json({ msg: 'Invalid Credentials' })
 			}
 
+			// Compare the password coming from the post request to the one in the DB
 			const isMatch = await bcrypt.compare(password, user.password)
 			if (!isMatch) {
 				return res.status(400).json({ msg: 'Invalid Credentials' })
 			}
 
+			// Give an object of user with the ID that came from the DB
 			const payload = {
 				user: {
 					id: user.id,
 				},
 			}
 
+			// Sign the token with the user.id ('encrypt this id') and give it a secret > return the token if there are no errors
 			jwt.sign(
 				payload,
 				config.get('jwtSecret'),

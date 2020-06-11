@@ -8,6 +8,7 @@ const Contact = require('../models/Contact')
 // @route       GET    api/contacts
 // @desc        Get all contacts of user
 // @access      Private
+// Finds the contacts that matches the user's ID coming from the JWT and sort by the newest contacts first
 router.get('/', auth, async (req, res) => {
 	try {
 		const contacts = await Contact.find({ user: req.user.id }).sort({
@@ -60,15 +61,63 @@ router.post(
 // @route       PUT    api/contacts/:id
 // @desc        Update contact
 // @access      Private
-router.put('/:id', (req, res) => {
-	res.send('Update contact')
+router.put('/:id', auth, async (req, res) => {
+	const { name, email, phone, type } = req.body
+
+	// Build contact object
+	const contactFields = {}
+	if (name) contactFields.name = name
+	if (email) contactFields.email = email
+	if (phone) contactFields.phone = phone
+	if (type) contactFields.type = type
+
+	try {
+		let contact = await Contact.findById(req.params.id)
+
+		if (!contact) return res.status(404).json({ msg: 'Contact not found' })
+
+		// The id coming from the token is actually a string so we convert the other to type String as well
+		// Don't forget that contact.user is set to the users ID upon creation of a contact in the post route above
+		// This is just to make sure it belongs to them
+		if (contact.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'Not authorized' })
+		}
+
+		// Find the contacts from the users by ID > update the fields by whatever is in the object
+		// new: true means that if the contact didn't exist then create a new one with said info
+		contact = await Contact.findByIdAndUpdate(
+			req.params.id,
+			{ $set: contactFields },
+			{ new: true }
+		)
+
+		res.json(contact)
+	} catch (error) {
+		console.error(error.message)
+		res.status(500).send('Server Error')
+	}
 })
 
 // @route       DELETE    api/contacts
 // @desc        Delete contact
 // @access      Private
-router.delete('/', (req, res) => {
-	res.send('Delete contact')
+router.delete('/:id', auth, async (req, res) => {
+	try {
+		let contact = await Contact.findById(req.params.id)
+
+		if (!contact) return res.status(404).json({ msg: 'Contact not found' })
+
+		if (contact.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'Not authorized' })
+		}
+
+		await Contact.findByIdAndRemove(req.params.id)
+
+		res.json({ msg: 'Contact Removed' })
+	} catch (error) {
+		console.error(error.message)
+		res.status(500).send('Server Error')
+	}
 })
 
 module.exports = router

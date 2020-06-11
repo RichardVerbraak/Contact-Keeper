@@ -48,7 +48,7 @@ router.post(
 				res.status(400).json({ msg: 'User already exists' })
 			}
 
-			// If not, create a new user with the mongo schema + an ID that Mongo creates for us
+			// If not, create a new user with the info coming from the body, that abides the mongo schema + an ID that Mongo creates for us
 			user = new User({
 				name,
 				email,
@@ -58,8 +58,10 @@ router.post(
 			// Generate a salt > Hash the password with the salt > Save to DB
 			const salt = await bcrypt.genSalt(10)
 
+			// Set the password to a hashed password
 			user.password = await bcrypt.hash(password, salt)
 
+			// Save to DB
 			await user.save()
 
 			// The object you want to send in the token, in this case just the user id (which comes from the Schema automatically not from the DB itself)
