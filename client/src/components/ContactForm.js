@@ -1,11 +1,24 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import ContactContext from '../context/contact/ContactContext'
 
 const ContactForm = () => {
 	const contactContext = useContext(ContactContext)
-	const { addContact } = contactContext
+	const { addContact, updateContact, current, clearCurrent } = contactContext
 
-	const [contact, setcontact] = useState({
+	useEffect(() => {
+		if (current !== null) {
+			setContact(current)
+		} else {
+			setContact({
+				name: '',
+				email: '',
+				phone: '',
+				type: 'personal',
+			})
+		}
+	}, [contactContext, current])
+
+	const [contact, setContact] = useState({
 		name: '',
 		email: '',
 		phone: '',
@@ -17,23 +30,33 @@ const ContactForm = () => {
 	// This syntax is just another way to set a key of an object without knowing ahead of time what you want it to be called
 	// Now you don't have to make multiple on change events with phone = e.target.value, name = e.target.value etc.
 	const onChange = (e) => {
-		setcontact({ ...contact, [e.target.name]: e.target.value })
+		setContact({ ...contact, [e.target.name]: e.target.value })
 	}
 
 	const onSubmit = (e) => {
 		e.preventDefault()
-		addContact(contact)
-		setcontact({
-			name: '',
-			email: '',
-			phone: '',
-			type: 'personal',
-		})
+		if (!current) {
+			addContact(contact)
+			setContact({
+				name: '',
+				email: '',
+				phone: '',
+				type: 'personal',
+			})
+		} else {
+			updateContact(contact)
+		}
+	}
+
+	const clearAll = () => {
+		clearCurrent()
 	}
 
 	return (
 		<form onSubmit={onSubmit}>
-			<h2 className='text-primary'> Add Contact</h2>
+			<h2 className='text-primary'>
+				{current ? 'Edit Contact' : 'Add Contact'}
+			</h2>
 			<input
 				type='text'
 				name='name'
@@ -75,10 +98,17 @@ const ContactForm = () => {
 			<div>
 				<input
 					type='submit'
-					value='Add Contact'
+					value={current ? 'Update Contact' : 'Add Contact'}
 					className='btn btn-primary btn-block'
 				/>
 			</div>
+			{current && (
+				<div>
+					<button className='btn btn-light btn-block' onClick={clearAll}>
+						Clear
+					</button>
+				</div>
+			)}
 		</form>
 	)
 }

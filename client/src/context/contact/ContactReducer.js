@@ -26,6 +26,27 @@ const ContactReducer = (state, action) => {
 					return contact.id !== action.payload
 				}),
 			}
+		// Maps through the contacts and finds the one that matches by ID > then set that contact to the payload : leave it as is
+		case UPDATE_CONTACT:
+			console.log(`Dispatched: ${action.type} Payload:`, action.payload)
+			return {
+				...state,
+				contacts: state.contacts.map((contact) => {
+					return contact.id === action.payload.id ? action.payload : contact
+				}),
+			}
+		case SET_CURRENT:
+			console.log(`Dispatched: ${action.type} Payload:`, action.payload)
+			return {
+				...state,
+				current: action.payload,
+			}
+		case CLEAR_CURRENT:
+			console.log(`Dispatched: ${action.type} Payload:`, action.payload)
+			return {
+				...state,
+				current: null,
+			}
 		default:
 			return state
 	}
