@@ -1,6 +1,7 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Contacts from './Contacts'
 import ContactForm from './ContactForm'
+import ContactFilter from './ContactFilter'
 
 const Home = (props) => {
 	return (
@@ -9,6 +10,7 @@ const Home = (props) => {
 				<ContactForm />
 			</div>
 			<div>
+				<ContactFilter />
 				<Contacts />
 			</div>
 		</div>

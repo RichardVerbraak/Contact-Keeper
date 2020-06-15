@@ -11,6 +11,7 @@ import {
 const ContactReducer = (state, action) => {
 	switch (action.type) {
 		// State is immutable so we copy what is already there and add on our contact
+		// Contacts set to an array of existing contacts + new contact
 		case ADD_CONTACT:
 			console.log(`Dispatched: ${action.type} Payload:`, action.payload)
 			return {
@@ -46,6 +47,22 @@ const ContactReducer = (state, action) => {
 			return {
 				...state,
 				current: null,
+			}
+		case FILTER_CONTACTS:
+			console.log(`Dispatched: ${action.type} Payload:`, action.payload)
+			return {
+				...state,
+				filtered: state.contacts.filter((contact) => {
+					return (
+						contact.name.toUpperCase().includes(action.payload.toUpperCase()) ||
+						contact.email.toUpperCase().includes(action.payload.toUpperCase())
+					)
+				}),
+			}
+		case CLEAR_FILTER:
+			return {
+				...state,
+				filtered: null,
 			}
 		default:
 			return state
