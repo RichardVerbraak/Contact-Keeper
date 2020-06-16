@@ -11,6 +11,7 @@ const User = require('../models/User')
 // @route       GET    api/auth
 // @desc        Get logged in user
 // @access      Private
+
 // Pass in the middleware auth which will run on this route (api/auth)
 // On this route you have to be logged in (have a JWT)
 router.get('/', auth, async (req, res) => {
@@ -27,6 +28,7 @@ router.get('/', auth, async (req, res) => {
 // @route       POST    api/auth
 // @desc        Auth user & get token
 // @access      Public
+
 // Check email and password when logging in > generate token
 router.post(
 	'/',

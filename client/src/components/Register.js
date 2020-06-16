@@ -1,9 +1,26 @@
-import React, { useState, useContext } from 'react'
-import { AlertContext } from '..//context/alert/AlertState'
+import React, { useState, useContext, useEffect } from 'react'
+import { AlertContext } from '../context/alert/AlertState'
+import { AuthContext } from '../context/auth/AuthState'
 
-const Register = () => {
+const Register = (props) => {
 	const alertContext = useContext(AlertContext)
 	const { setAlert } = alertContext
+
+	const authContext = useContext(AuthContext)
+	const { register, error, clearErrors, isAuthenticated } = authContext
+
+	// Whenever the [error] changes, set an alert with that errors msg (made in AlertState) and clear the errors value (which resides in the AuthState)
+	useEffect(() => {
+		if (isAuthenticated) {
+			props.history.push('/')
+		}
+
+		if (error === 'User already exists') {
+			setAlert(error, 'danger')
+			clearErrors()
+		}
+		// eslint-disable-next-line
+	}, [error, isAuthenticated, props.history])
 
 	const [user, setUser] = useState({
 		name: '',
@@ -21,6 +38,7 @@ const Register = () => {
 		})
 	}
 
+	// Register the user with the data that comes from the form
 	const onSubmit = (e) => {
 		e.preventDefault()
 		if (name === '' || email === '' || password === '') {
@@ -28,7 +46,11 @@ const Register = () => {
 		} else if (password !== password2) {
 			setAlert('Passwords do not match', 'danger')
 		} else {
-			console.log('Register submitted')
+			register({
+				name,
+				email,
+				password,
+			})
 		}
 	}
 

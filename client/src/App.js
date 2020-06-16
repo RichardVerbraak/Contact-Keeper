@@ -7,9 +7,16 @@ import Home from './components/Home'
 import About from './components/About'
 import Register from './components/Register'
 import Login from './components/Login'
+
 import ContactState from './context/contact/ContactState'
 import AuthState from './context/auth/AuthState'
 import AlertState from './context/alert/AlertState'
+import setAuthToken from './utils/setAuthToken'
+
+// When the app loads, checks to see if there is a token and set the global header to x-auth-token for every request to the server
+if (localStorage.token) {
+	setAuthToken(localStorage.token)
+}
 
 const App = () => {
 	return (
