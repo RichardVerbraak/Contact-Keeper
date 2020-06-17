@@ -9,6 +9,8 @@ export const CLEAR_FILTER = 'CLEAR_FILTER'
 export const SET_FILTER = 'SET_FILTER'
 export const SET_ALERT = 'SET_ALERT'
 export const REMOVE_ALERT = 'REMOVE_ALERT'
+export const CONTACT_ERROR = 'CONTACT_ERROR'
+export const GET_CONTACTS = 'GET_CONTACTS'
 
 // Auth (remove later just to switch things up)
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS'

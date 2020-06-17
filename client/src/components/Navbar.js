@@ -1,6 +1,6 @@
 import React, { useContext, Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { NavLink, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/auth/AuthState'
 
 const Navbar = ({ title, icon }) => {

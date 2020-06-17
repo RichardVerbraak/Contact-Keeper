@@ -6,10 +6,18 @@ import {
 	UPDATE_CONTACT,
 	FILTER_CONTACTS,
 	CLEAR_FILTER,
+	CONTACT_ERROR,
+	GET_CONTACTS,
 } from '../types'
 
 const ContactReducer = (state, action) => {
 	switch (action.type) {
+		case GET_CONTACTS:
+			console.log(`Dispatched: ${action.type} Payload:`, action.payload)
+			return {
+				...state,
+				contacts: action.payload,
+			}
 		// State is immutable so we copy what is already there and add on our contact
 		// Contacts set to an array of existing contacts + new contact
 		case ADD_CONTACT:
@@ -63,6 +71,11 @@ const ContactReducer = (state, action) => {
 			return {
 				...state,
 				filtered: null,
+			}
+		case CONTACT_ERROR:
+			return {
+				...state,
+				error: action.payload,
 			}
 		default:
 			return state
