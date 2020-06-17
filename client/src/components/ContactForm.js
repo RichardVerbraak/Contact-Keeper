@@ -18,6 +18,7 @@ const ContactForm = () => {
 		}
 	}, [contactContext, current])
 
+	// Default for the form field
 	const [contact, setContact] = useState({
 		name: '',
 		email: '',
@@ -33,6 +34,7 @@ const ContactForm = () => {
 		setContact({ ...contact, [e.target.name]: e.target.value })
 	}
 
+	// Make the onSubmit button for adding a contact if there is not 'current user' selected, else make it a button for updating the contact
 	const onSubmit = (e) => {
 		e.preventDefault()
 		if (!current) {
@@ -43,8 +45,10 @@ const ContactForm = () => {
 				phone: '',
 				type: 'personal',
 			})
+			// Update > Clear form fields
 		} else {
 			updateContact(contact)
+			clearCurrent()
 		}
 	}
 

@@ -64,7 +64,7 @@ router.post(
 router.put('/:id', auth, async (req, res) => {
 	const { name, email, phone, type } = req.body
 
-	// Build contact object
+	// Build an object with the contact we get in from the requests body (the content)
 	const contactFields = {}
 	if (name) contactFields.name = name
 	if (email) contactFields.email = email

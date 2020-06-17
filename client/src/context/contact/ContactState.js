@@ -12,11 +12,12 @@ import {
 	CLEAR_FILTER,
 	CONTACT_ERROR,
 	GET_CONTACTS,
+	CLEAR_CONTACTS,
 } from '../types'
 
 const ContactState = (props) => {
 	const initialState = {
-		contacts: [],
+		contacts: null,
 		current: null,
 		filtered: null,
 		error: null,
@@ -38,6 +39,12 @@ const ContactState = (props) => {
 				payload: error.response.msg,
 			})
 		}
+	}
+
+	const clearContacts = () => {
+		dispatch({
+			type: CLEAR_CONTACTS,
+		})
 	}
 
 	// Add Contact
@@ -64,15 +71,48 @@ const ContactState = (props) => {
 		}
 	}
 
-	// Delete Contact
-	const deleteContact = (id) => {
+	// Update Contact
+	const updateContact = async (contact) => {
 		try {
-		} catch (error) {}
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}
+			const res = await axios.put(
+				`/api/contacts/${contact._id}`,
+				contact,
+				config
+			)
 
-		dispatch({
-			type: DELETE_CONTACT,
-			payload: id,
-		})
+			dispatch({
+				type: UPDATE_CONTACT,
+				payload: res.data,
+			})
+		} catch (error) {
+			dispatch({
+				type: CONTACT_ERROR,
+				payload: error.response.msg,
+			})
+		}
+	}
+
+	// Delete Contact
+	const deleteContact = async (id) => {
+		// Back end looks at the URL and pulls ID with req.params.id => Finds by ID and deletes contact
+		try {
+			await axios.delete(`/api/contacts/${id}`)
+
+			dispatch({
+				type: DELETE_CONTACT,
+				payload: id,
+			})
+		} catch (error) {
+			dispatch({
+				type: CONTACT_ERROR,
+				payload: error.response.msg,
+			})
+		}
 	}
 
 	// Set Current Contact
@@ -87,14 +127,6 @@ const ContactState = (props) => {
 	const clearCurrent = () => {
 		dispatch({
 			type: CLEAR_CURRENT,
-		})
-	}
-
-	// Update Contact
-	const updateContact = (contact) => {
-		dispatch({
-			type: UPDATE_CONTACT,
-			payload: contact,
 		})
 	}
 
@@ -128,6 +160,7 @@ const ContactState = (props) => {
 				updateContact,
 				filterContacts,
 				clearFilter,
+				clearContacts,
 			}}
 		>
 			{props.children}
