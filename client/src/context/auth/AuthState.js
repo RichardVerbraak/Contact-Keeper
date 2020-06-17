@@ -59,6 +59,7 @@ const AuthState = (props) => {
 				payload: res.data,
 			})
 
+			// Immediatly loads the registered user into our state.user (basically log the user in after registering and keep checking if hes authenticated on every page)
 			loadUser()
 
 			// If there is an error, the payload will be the error object with a msg that's created in our backend
@@ -71,8 +72,36 @@ const AuthState = (props) => {
 	}
 
 	// Login user
+	const login = async (formData) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}
+
+		try {
+			const res = await axios.post('/api/auth', formData, config)
+
+			dispatch({
+				type: 'LOGIN_SUCCESS',
+				payload: res.data,
+			})
+
+			loadUser()
+		} catch (error) {
+			dispatch({
+				type: 'LOGIN_FAIL',
+				payload: error.response.data.msg,
+			})
+		}
+	}
 
 	// Logout
+	const logout = () => {
+		dispatch({
+			type: 'LOGOUT',
+		})
+	}
 
 	// Clear errors
 	const clearErrors = () => {
@@ -92,6 +121,8 @@ const AuthState = (props) => {
 				register,
 				clearErrors,
 				loadUser,
+				login,
+				logout,
 			}}
 		>
 			{props.children}

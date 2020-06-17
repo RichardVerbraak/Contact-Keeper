@@ -8,7 +8,9 @@ const AuthReducer = (state, action) => {
 				user: action.payload,
 			}
 		// Saves token in localStorage > add token as an object to the state (...action.payload)
+		// Both upon registering and logging in will we want to store the token into localStorage and into our state
 		case 'REGISTER_SUCCESS':
+		case 'LOGIN_SUCCESS':
 			localStorage.setItem('token', action.payload.token)
 			return {
 				...state,
@@ -17,9 +19,11 @@ const AuthReducer = (state, action) => {
 				loading: false,
 			}
 
-		// 'Resets' everything when register fails
+		// 'Resets' everything when Register or Authorization fails
 		case 'REGISTER_FAIL':
 		case 'AUTH_ERROR':
+		case 'LOGIN_FAIL':
+		case 'LOGOUT':
 			localStorage.removeItem('token')
 			return {
 				...state,
